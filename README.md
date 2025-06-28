@@ -21,41 +21,146 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# MKShop API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A NestJS API with MongoDB integration using Mongoose.
 
-## Project setup
+## Features
 
-```bash
-$ yarn install
-```
+- MongoDB connection with Mongoose
+- User management with CRUD operations
+- Environment-based configuration
+- TypeScript support
 
-## Compile and run the project
+## Prerequisites
 
-```bash
-# development
-$ yarn run start
+- Node.js (v18 or higher)
+- MongoDB (local or cloud instance)
+- Yarn package manager
 
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
-```
-
-## Run tests
+## Installation
 
 ```bash
-# unit tests
-$ yarn run test
+# Install dependencies
+yarn install
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+# Create environment file
+cp .env.example .env
 ```
+
+## Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/mkshop
+
+# Application Configuration
+PORT=3000
+NODE_ENV=development
+```
+
+### MongoDB Connection Options
+
+1. **Local MongoDB:**
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/mkshop
+   ```
+
+2. **MongoDB with Authentication:**
+   ```env
+   MONGODB_URI=mongodb://username:password@localhost:27017/mkshop?authSource=admin
+   ```
+
+3. **MongoDB Atlas (Cloud):**
+   ```env
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/mkshop?retryWrites=true&w=majority
+   ```
+
+## Running the Application
+
+```bash
+# Development mode
+yarn start:dev
+
+# Production mode
+yarn start:prod
+
+# Debug mode
+yarn start:debug
+```
+
+## API Endpoints
+
+### Users
+
+- `POST /users` - Create a new user
+- `GET /users` - Get all users
+- `GET /users/:id` - Get user by ID
+- `PATCH /users/:id` - Update user
+- `DELETE /users/:id` - Delete user
+
+### Example User Object
+
+```json
+{
+  "email": "user@example.com",
+  "name": "John Doe",
+  "age": 30,
+  "isActive": true
+}
+```
+
+## Project Structure
+
+```
+src/
+├── config/
+│   └── database.config.ts    # MongoDB configuration
+├── schemas/
+│   └── user.schema.ts        # User Mongoose schema
+├── users/
+│   ├── users.controller.ts   # User REST endpoints
+│   ├── users.service.ts      # User business logic
+│   └── users.module.ts       # User module
+├── app.controller.ts         # Main app controller
+├── app.service.ts           # Main app service
+├── app.module.ts            # Root module
+└── main.ts                  # Application entry point
+```
+
+## Testing
+
+```bash
+# Unit tests
+yarn test
+
+# E2E tests
+yarn test:e2e
+
+# Test coverage
+yarn test:cov
+```
+
+## Database Schema
+
+### User Schema
+
+- `email` (required, unique): User's email address
+- `name` (required): User's full name
+- `age` (optional): User's age
+- `isActive` (default: true): User's active status
+- `createdAt` (auto): Creation timestamp
+- `updatedAt` (auto): Last update timestamp
+
+## Development
+
+The application uses:
+- **NestJS** - Framework
+- **Mongoose** - MongoDB ODM
+- **TypeScript** - Programming language
+- **Jest** - Testing framework
 
 ## Deployment
 
@@ -95,4 +200,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+UNLICENSED
