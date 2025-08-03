@@ -33,9 +33,7 @@ export class RoleService {
   }
 
   async update(id: string, updateRoleDto: Partial<Role>): Promise<Role> {
-    const role = await this.roleModel
-      .findByIdAndUpdate(id, updateRoleDto, { new: true })
-      .exec();
+    const role = await this.roleModel.findByIdAndUpdate(id, updateRoleDto, { new: true }).exec();
     if (!role) {
       throw new NotFoundException(`Role with ID ${id} not found`);
     }
@@ -56,9 +54,7 @@ export class RoleService {
   }
 
   async getDefaultRole(): Promise<Role> {
-    const defaultRole = await this.roleModel
-      .findOne({ level: RoleLevel.USER })
-      .exec();
+    const defaultRole = await this.roleModel.findOne({ level: RoleLevel.USER }).exec();
     if (!defaultRole) {
       throw new NotFoundException('Default role not found');
     }

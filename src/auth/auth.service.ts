@@ -1,18 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import {
-  Auth,
-  AuthDocument,
-  AuthProvider,
-  AuthStatus,
-} from '../schemas/auth.schema';
+import { Auth, AuthDocument, AuthProvider, AuthStatus } from '../schemas/auth.schema';
 import { Session, SessionDocument } from '../schemas/session.schema';
 import { RoleService } from './role.service';
 import { ErrorParserService } from '../common/error-parser.service';
@@ -33,9 +24,7 @@ export class AuthService {
     name: string;
     provider?: AuthProvider;
   }): Promise<{ auth: Auth; accessToken: string; refreshToken: string }> {
-    const existingAuth = await this.authModel
-      .findOne({ email: registerDto.email })
-      .exec();
+    const existingAuth = await this.authModel.findOne({ email: registerDto.email }).exec();
     if (existingAuth) {
       throw new BadRequestException('Email already registered');
     }
@@ -76,10 +65,7 @@ export class AuthService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      auth.passwordHash,
-    );
+    const isPasswordValid = await bcrypt.compare(loginDto.password, auth.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -105,9 +91,7 @@ export class AuthService {
     try {
       // Verify refresh token
       const payload = this.jwtService.verify(refreshToken, {
-        secret:
-          process.env.JWT_REFRESH_SECRET ||
-          'your-super-secret-refresh-key-change-in-production',
+        secret: process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production',
       });
 
       const auth = await this.findById(payload.sub);
@@ -140,9 +124,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, {
-        secret:
-          process.env.JWT_REFRESH_SECRET ||
-          'your-super-secret-refresh-key-change-in-production',
+        secret: process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production',
         expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
       }),
     ]);
@@ -154,9 +136,7 @@ export class AuthService {
     try {
       // Verify and decode the refresh token
       await this.jwtService.verify(refreshToken, {
-        secret:
-          process.env.JWT_REFRESH_SECRET ||
-          'your-super-secret-refresh-key-change-in-production',
+        secret: process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production',
       });
 
       // Add to blacklist or invalidate (in a real app, you'd store this in Redis)
@@ -172,10 +152,7 @@ export class AuthService {
     if (!auth) return false;
 
     // Check role permissions
-    const hasRolePermission = await this.roleService.hasPermission(
-      auth.roleId.toString(),
-      permission,
-    );
+    const hasRolePermission = await this.roleService.hasPermission(auth.roleId.toString(), permission);
 
     // Check individual permissions
     const hasIndividualPermission = auth.permissions.includes(permission);
@@ -183,13 +160,8 @@ export class AuthService {
     return hasRolePermission || hasIndividualPermission;
   }
 
-  async updatePermissions(
-    authId: string,
-    permissions: string[],
-  ): Promise<Auth> {
-    const auth = await this.authModel
-      .findByIdAndUpdate(authId, { permissions }, { new: true })
-      .exec();
+  async updatePermissions(authId: string, permissions: string[]): Promise<Auth> {
+    const auth = await this.authModel.findByIdAndUpdate(authId, { permissions }, { new: true }).exec();
 
     if (!auth) {
       throw new BadRequestException('Auth record not found');
