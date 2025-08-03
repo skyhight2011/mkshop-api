@@ -1,20 +1,5 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  UseGuards,
-  Request,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiBody,
-} from '@nestjs/swagger';
+import { Controller, Post, Body, Get, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RoleService } from './role.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -202,14 +187,8 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - invalid token' })
-  async checkPermission(
-    @Body() checkDto: { permission: string },
-    @Request() req: { user: AuthenticatedUser },
-  ) {
-    const hasPermission = await this.authService.hasPermission(
-      req.user.authId,
-      checkDto.permission,
-    );
+  async checkPermission(@Body() checkDto: { permission: string }, @Request() req: { user: AuthenticatedUser }) {
+    const hasPermission = await this.authService.hasPermission(req.user.authId, checkDto.permission);
     return { hasPermission };
   }
 }
